@@ -1,0 +1,31 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "bun: dev",
+			"detail": "next dev --turbopack",
+			"type": "bun",
+			"script": "dev",
+			"problemMatcher": [],
+			"runOptions": {
+				"runOn": "folderOpen"
+			},
+			"presentation": {
+				"reveal": "never"
+			}
+		},
+		{
+			"label": "bun: db:studio",
+			"detail": "bun run db:studio",
+			"type": "bun",
+			"script": "db:studio",
+			"problemMatcher": [],
+			"runOptions": {
+				"runOn": "folderOpen"
+			},
+			"presentation": {
+				"reveal": "never"
+			}
+		}
+	]
+}
