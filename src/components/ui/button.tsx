@@ -1,18 +1,18 @@
-export function Input(
+export function Button(
   {
     children,
-    props,
-    className = ""
+    className = "",
+    props
   }: {
     children?: React.ReactNode;
-    props?: React.ButtonHTMLAttributes<HTMLButtonElement>;
     className?: string;
+    props?: React.ButtonHTMLAttributes<HTMLButtonElement>;
   }
 ) {
   return (
     <button
       className={`
-        flex mx-auto text-white bg-indigo-500 
+        text-white bg-indigo-500 
         border-0 py-2 px-8 rounded text-lg
         focus:outline-none hover:bg-indigo-600 
         ${className}

@@ -5,6 +5,8 @@ import { signIn } from "@/actions";
 import { z } from "zod";
 import { signInSchema } from "@/schemas/auth";
 import Link from "next/link";
+import { Input, Password } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 type FormData = z.infer<typeof signInSchema>;
 
@@ -84,19 +86,19 @@ export function SignInForm() {
         <label htmlFor="email" className="block font-medium">
           Email
         </label>
-        <input
+        <Input
           id="email"
           name="email"
           type="email"
           value={formData.email}
           onChange={handleChange}
           onBlur={handleEmailBlur}
-          className={errors.email ? "border-red-500" : ""}
+          className={errors.email ? "border-rose-500" : ""}
           aria-invalid={!!errors.email}
           aria-describedby={errors.email ? "email-error" : undefined}
         />
         {errors.email && (
-          <p id="email-error" className="text-sm text-red-600">
+          <p id="email-error" className="text-sm text-rose-500">
             {errors.email}
           </p>
         )}
@@ -105,17 +107,17 @@ export function SignInForm() {
         <label htmlFor="password" className="block font-medium">
           Senha
         </label>
-        <input
+        <Password
           id="password"
           name="password"
-          type="password"
           value={formData.password}
           onChange={handleChange}
-          className={errors.password ? "border-red-500" : ""}
+          className={errors.password ? "border-rose-500" : ""}
           placeholder="Digite sua senha..."
+          showStrength={true}
         />
         {errors.password && (
-          <p className="text-sm text-red-600">{errors.password}</p>
+          <p className="text-sm text-rose-500">{errors.password}</p>
         )}
       </div>
       <div className="flex items-center justify-between">
@@ -125,9 +127,9 @@ export function SignInForm() {
             Cadastre-se
           </Link>
         </div>
-        <button type="submit" disabled={loading || !!errors.email || !!errors.password}>
+        <Button props={{ type: "submit", disabled: loading || !!errors.email || !!errors.password }}>
           {loading ? "Entrando..." : "Entrar"}
-        </button>
+        </Button>
       </div>
     </form>
   );

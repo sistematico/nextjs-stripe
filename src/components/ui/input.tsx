@@ -10,7 +10,7 @@ function Strength({ password }: { password: string }) {
   useEffect(() => {
     const calculateStrength = () => {
       let score = 0;
-      
+
       if (!password) {
         setStrength(0);
         setMessage("");
@@ -23,13 +23,13 @@ function Strength({ password }: { password: string }) {
 
       // Letras maiúsculas
       if (/[A-Z]/.test(password)) score++;
-      
+
       // Letras minúsculas
       if (/[a-z]/.test(password)) score++;
-      
+
       // Números
       if (/[0-9]/.test(password)) score++;
-      
+
       // Caracteres especiais
       if (/[^A-Za-z0-9]/.test(password)) score++;
 
@@ -86,7 +86,7 @@ export function Input({ className = "", ...props }) {
     <input
       className={`
         w-full bg-gray-800 bg-opacity-40 rounded 
-        border border-gray-700 focus:outline-none 
+        border-2 border-gray-700 focus:outline-none 
         text-base outline-none text-gray-100 
         py-1 px-3 leading-8 transition-colors duration-200 ease-in-out
         ${className}
@@ -101,27 +101,33 @@ export function Password({ className = "", showStrength = false, ...props }) {
   const toggleVisibility = () => setIsVisible(prevState => !prevState);
 
   return (
-    <div className="relative">
-      <Input
-        props={{
-          type: isVisible ? "text" : "password",
-          ...props
-        }}
-        className={className}
-      />
-      <button
-        className="absolute inset-y-0 end-0 flex items-center z-20 px-3 cursor-pointer text-gray-400 rounded-e-md focus:outline-none focus-visible:text-foreground/80 hover:text-foreground/80 transition-colors"
-        type="button"
-        onClick={toggleVisibility}
-        aria-label={isVisible ? "Ocultar senha" : "Mostrar senha"}
-        aria-pressed={isVisible}
-      >
-        {isVisible ? (
-          <EyeOff size={18} aria-hidden="true" />
-        ) : (
-          <Eye size={18} aria-hidden="true" />
-        )}
-      </button>
+    <div>
+      <div className="relative">
+        <Input
+          type={isVisible ? "text" : "password"}
+          className={className}
+          {...props}
+        />
+        <button
+          className="
+          absolute inset-y-0 end-0 flex items-center z-20 
+          px-3 cursor-pointer text-gray-400 
+          rounded-e-md 
+          focus:outline-none focus-visible:text-foreground/80 
+          hover:text-foreground/80 transition-colors
+        "
+          type="button"
+          onClick={toggleVisibility}
+          aria-label={isVisible ? "Ocultar senha" : "Mostrar senha"}
+          aria-pressed={isVisible}
+        >
+          {isVisible ? (
+            <EyeOff size={18} aria-hidden="true" />
+          ) : (
+            <Eye size={18} aria-hidden="true" />
+          )}
+        </button>
+      </div>
       {showStrength && <Strength password={props.value || ""} />}
     </div>
   );

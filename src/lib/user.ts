@@ -1,8 +1,8 @@
 import { eq } from "drizzle-orm";
-import { cookies } from "next/headers";
-import { getUserFromSession } from "@/lib/session";
 import { cache } from "react";
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { getUserFromSession } from "@/lib/session";
 import { db } from "@/db";
 import { users } from "@/db/schema";
 
@@ -15,6 +15,13 @@ type User = Exclude<
   Awaited<ReturnType<typeof getUserFromSession>>,
   undefined | null
 >;
+
+async function getUserFromDb(id: number) {
+  return await db.query.users.findFirst({
+    columns: { id: true, email: true, role: true, name: true, username: true },
+    where: eq(users.id, id),
+  });
+}
 
 function _getCurrentUser(options: {
   withFullUser: true;
@@ -42,8 +49,8 @@ async function _getCurrentUser({
 } = {}) {
   const user = await getUserFromSession(await cookies());
 
-  if (user == null) {
-    if (redirectIfNotFound) return redirect("/sign-in");
+  if (!user) {
+    if (redirectIfNotFound) return redirect("/entrar");
     return null;
   }
 
@@ -57,10 +64,3 @@ async function _getCurrentUser({
 }
 
 export const getCurrentUser = cache(_getCurrentUser);
-
-async function getUserFromDb(id: number) {
-  return await db.query.users.findFirst({
-    columns: { id: true, email: true, role: true, name: true, username: true },
-    where: eq(users.id, id),
-  });
-}

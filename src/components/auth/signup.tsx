@@ -5,7 +5,8 @@ import Link from "next/link";
 import { useState } from "react";
 import { signUp } from "@/actions";
 import { signUpSchema } from "@/schemas/auth";
-// import { PasswordStrength } from "@/components/ui/password-strength";
+import { Input, Password } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 type FormData = z.infer<typeof signUpSchema>;
 
@@ -18,8 +19,7 @@ export function SignUpForm() {
 
   function validateEmail(email: string): string | undefined {
     if (!email) return "Email é obrigatório";
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return "Email inválido. Exemplo: usuario@dominio.com";
-    
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return "Email inválido. Exemplo: usuario@dominio.com";    
     return undefined;
   }
 
@@ -82,25 +82,25 @@ export function SignUpForm() {
         <label htmlFor="name" className="block font-medium">
           Nome
         </label>
-        <input
+        <Input
           id="name"
           name="name"
           type="text"
           value={formData.name}
           onChange={handleChange}
           autoComplete="new-password"
-          className={errors.name ? "border-red-500" : ""}
+          className={errors.name ? "border-rose-500" : ""}
         />
         {errors.name && (
-          <p className="text-sm text-red-600">{errors.name}</p>
+          <p className="text-sm text-rose-500">{errors.name}</p>
         )}
       </div>
 
       <div className="space-y-2">
         <label htmlFor="email" className="block font-medium">
-          Email
+          E-mail
         </label>
-        <input
+        <Input
           id="email"
           name="email"
           type="email"
@@ -108,12 +108,12 @@ export function SignUpForm() {
           onChange={handleChange}
           onBlur={handleEmailBlur}
           autoComplete="off"
-          className={errors.email ? "border-red-500" : ""}
+          className={errors.email ? "border-rose-500" : ""}
           aria-invalid={!!errors.email}
           aria-describedby={errors.email ? "email-error" : undefined}
         />
         {errors.email && (
-          <p id="email-error" className="text-sm text-red-600">
+          <p id="email-error" className="text-sm text-rose-500">
             {errors.email}
           </p>
         )}
@@ -123,19 +123,18 @@ export function SignUpForm() {
         <label htmlFor="password" className="block font-medium">
           Senha
         </label>
-        <input
+        <Password
           id="password"
           name="password"
           value={formData.password}
           onChange={handleChange}
-          autoComplete="new-password"
-          className={errors.password ? "border-red-500" : ""}
+          autoComplete="nope"
+          className={errors.password ? "border-rose-500" : ""}
           placeholder="Digite sua senha..."
-          // showStrength={true}
+          showStrength={true}
         />
-        {/* <PasswordStrength password={formData.password} /> */}
         {errors.password && (
-          <p className="text-sm text-red-600">{errors.password}</p>
+          <p className="text-sm text-rose-500">{errors.password}</p>
         )}
         <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
           Use pelo menos 8 caracteres, incluindo letras maiúsculas, minúsculas, números e símbolos.
@@ -145,9 +144,9 @@ export function SignUpForm() {
         <Link href="/entrar" className="underline">
           Já tenho conta
         </Link>
-        <button type="submit" disabled={loading || !!errors.email}>
+        <Button props={{ type: "submit", disabled: loading || !!errors.email || !!errors.password }}>
           {loading ? "Cadastrando..." : "Cadastrar"}
-        </button>
+        </Button>
       </div>
     </form>
   );
