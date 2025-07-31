@@ -3,7 +3,7 @@
 import { z } from "zod";
 import Link from "next/link";
 import { useState } from "react";
-import { signUp } from "@/actions";
+import { signUp } from "@/actions/auth";
 import { signUpSchema } from "@/schemas/auth";
 import { Input, Password } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -19,21 +19,21 @@ export function SignUpForm() {
 
   function validateEmail(email: string): string | undefined {
     if (!email) return "Email é obrigatório";
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return "Email inválido. Exemplo: usuario@dominio.com";    
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return "Email inválido. Exemplo: usuario@dominio.com";
     return undefined;
   }
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
-    
+
     if (name === "email" && emailTouched) {
       const emailError = validateEmail(value);
       setErrors({ ...errors, email: emailError });
     } else {
       setErrors({ ...errors, [name]: undefined });
     }
-    
+
     setSubmitError(undefined);
   }
 
@@ -45,7 +45,7 @@ export function SignUpForm() {
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    
+
     const emailError = validateEmail(formData.email);
     if (emailError) {
       setErrors({ ...errors, email: emailError });
@@ -72,82 +72,85 @@ export function SignUpForm() {
   }
 
   return (
-    <form onSubmit={onSubmit} className="space-y-8" autoComplete="nope">
-      {submitError && (
-        <div className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 p-3 rounded-md text-sm">
-          {submitError}
+    <div className="border border-gray-200 rounded-lg shadow-lg p-6 md:w-xl">
+      <h2 className="text-xl font-bold mb-4">Entrar</h2>
+      <form onSubmit={onSubmit} className="space-y-8" autoComplete="nope">
+        {submitError && (
+          <div className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 p-3 rounded-md text-sm">
+            {submitError}
+          </div>
+        )}
+        <div className="space-y-2">
+          <label htmlFor="name" className="block font-medium">
+            Nome
+          </label>
+          <Input
+            id="name"
+            name="name"
+            type="text"
+            value={formData.name}
+            onChange={handleChange}
+            autoComplete="new-password"
+            className={errors.name ? "border-rose-500" : ""}
+          />
+          {errors.name && (
+            <p className="text-sm text-rose-500">{errors.name}</p>
+          )}
         </div>
-      )}
-      <div className="space-y-2">
-        <label htmlFor="name" className="block font-medium">
-          Nome
-        </label>
-        <Input
-          id="name"
-          name="name"
-          type="text"
-          value={formData.name}
-          onChange={handleChange}
-          autoComplete="new-password"
-          className={errors.name ? "border-rose-500" : ""}
-        />
-        {errors.name && (
-          <p className="text-sm text-rose-500">{errors.name}</p>
-        )}
-      </div>
 
-      <div className="space-y-2">
-        <label htmlFor="email" className="block font-medium">
-          E-mail
-        </label>
-        <Input
-          id="email"
-          name="email"
-          type="email"
-          value={formData.email}
-          onChange={handleChange}
-          onBlur={handleEmailBlur}
-          autoComplete="off"
-          className={errors.email ? "border-rose-500" : ""}
-          aria-invalid={!!errors.email}
-          aria-describedby={errors.email ? "email-error" : undefined}
-        />
-        {errors.email && (
-          <p id="email-error" className="text-sm text-rose-500">
-            {errors.email}
+        <div className="space-y-2">
+          <label htmlFor="email" className="block font-medium">
+            E-mail
+          </label>
+          <Input
+            id="email"
+            name="email"
+            type="email"
+            value={formData.email}
+            onChange={handleChange}
+            onBlur={handleEmailBlur}
+            autoComplete="off"
+            className={errors.email ? "border-rose-500" : ""}
+            aria-invalid={!!errors.email}
+            aria-describedby={errors.email ? "email-error" : undefined}
+          />
+          {errors.email && (
+            <p id="email-error" className="text-sm text-rose-500">
+              {errors.email}
+            </p>
+          )}
+        </div>
+
+        <div className="space-y-2">
+          <label htmlFor="password" className="block font-medium">
+            Senha
+          </label>
+          <Password
+            id="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            autoComplete="nope"
+            className={errors.password ? "border-rose-500" : ""}
+            placeholder="Digite sua senha..."
+            showStrength={true}
+          />
+          {errors.password && (
+            <p className="text-sm text-rose-500">{errors.password}</p>
+          )}
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+            Use pelo menos 8 caracteres, incluindo letras maiúsculas, minúsculas, números e símbolos.
           </p>
-        )}
-      </div>
-
-      <div className="space-y-2">
-        <label htmlFor="password" className="block font-medium">
-          Senha
-        </label>
-        <Password
-          id="password"
-          name="password"
-          value={formData.password}
-          onChange={handleChange}
-          autoComplete="nope"
-          className={errors.password ? "border-rose-500" : ""}
-          placeholder="Digite sua senha..."
-          showStrength={true}
-        />
-        {errors.password && (
-          <p className="text-sm text-rose-500">{errors.password}</p>
-        )}
-        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-          Use pelo menos 8 caracteres, incluindo letras maiúsculas, minúsculas, números e símbolos.
-        </p>
-      </div>
-      <div className="flex justify-between">
-        <Link href="/entrar" className="underline">
-          Já tenho conta
-        </Link>
-        <Button props={{ type: "submit", disabled: loading || !!errors.email || !!errors.password }}>
-          {loading ? "Cadastrando..." : "Cadastrar"}
-        </Button>
-      </div>
-    </form>
+        </div>
+        <div className="flex justify-between">
+          <Link href="/entrar" className="underline">
+            Já tenho conta
+          </Link>
+          <Button props={{ type: "submit", disabled: loading || !!errors.email || !!errors.password }}>
+            {loading ? "Cadastrando..." : "Cadastrar"}
+          </Button>
+        </div>
+      </form>
+    </div>
   );
 }

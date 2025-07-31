@@ -2,9 +2,27 @@ import Link from "next/link";
 import Image from "next/image";
 import { getCurrentUser } from "@/lib/user";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Plans } from "@/components/subscription/plans";
 
 export default async function Home() {
   const user = await getCurrentUser({ withFullUser: true });
+
+  if (!user) {
+    return (
+      <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-nunito-sans)]">
+        <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
+          <Plans />
+        </main>
+      </div>
+      // <div className="container mx-auto py-20">
+      //   <div className="flex items-center justify-center min-h-[calc(100vh-10rem)] w-full w-md-2xl">
+      //     <Link href="/auth/signin" className="text-blue-500 hover:underline">
+      //       Faça login para continuar
+      //     </Link>
+      //   </div>
+      // </div>
+    );
+  }
 
   return (
     <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-nunito-sans)]">

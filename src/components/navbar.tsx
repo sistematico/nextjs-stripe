@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { logOut } from "@/actions";
+import { logOut } from "@/actions/auth";
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { signIn } from "@/actions";
+import { signIn } from "@/actions/auth";
 import { z } from "zod";
 import { signInSchema } from "@/schemas/auth";
 import Link from "next/link";
@@ -19,17 +19,17 @@ export function SignInForm() {
 
   function validateEmail(email: string): string | undefined {
     if (!email) return "Email é obrigatório";
-    
+
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) return "Email inválido. Exemplo: usuario@dominio.com";
-    
+
     return undefined;
   }
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
-    
+
     // Validação em tempo real para email
     if (name === "email" && emailTouched) {
       const emailError = validateEmail(value);
@@ -37,7 +37,7 @@ export function SignInForm() {
     } else {
       setErrors({ ...errors, [name]: undefined });
     }
-    
+
     setSubmitError(undefined);
   }
 
@@ -76,61 +76,64 @@ export function SignInForm() {
   }
 
   return (
-    <form onSubmit={onSubmit} className="space-y-8">
-      {submitError && (
-        <div className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 p-3 rounded-md text-sm">
-          {submitError}
-        </div>
-      )}
-      <div className="space-y-2">
-        <label htmlFor="email" className="block font-medium">
-          Email
-        </label>
-        <Input
-          id="email"
-          name="email"
-          type="email"
-          value={formData.email}
-          onChange={handleChange}
-          onBlur={handleEmailBlur}
-          className={errors.email ? "border-rose-500" : ""}
-          aria-invalid={!!errors.email}
-          aria-describedby={errors.email ? "email-error" : undefined}
-        />
-        {errors.email && (
-          <p id="email-error" className="text-sm text-rose-500">
-            {errors.email}
-          </p>
+    <div className="border border-gray-200 rounded-lg shadow-lg p-6 md:w-xl">
+      <h2 className="text-xl font-bold mb-4">Entrar</h2>
+      <form onSubmit={onSubmit} className="space-y-8">
+        {submitError && (
+          <div className="bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 p-3 rounded-md text-sm">
+            {submitError}
+          </div>
         )}
-      </div>
-      <div className="space-y-2">
-        <label htmlFor="password" className="block font-medium">
-          Senha
-        </label>
-        <Password
-          id="password"
-          name="password"
-          value={formData.password}
-          onChange={handleChange}
-          className={errors.password ? "border-rose-500" : ""}
-          placeholder="Digite sua senha..."
-          showStrength={true}
-        />
-        {errors.password && (
-          <p className="text-sm text-rose-500">{errors.password}</p>
-        )}
-      </div>
-      <div className="flex items-center justify-between">
-        <div>
-          Ainda não tem uma conta?{" "}
-          <Link href="/cadastro" className="underline">
-            Cadastre-se
-          </Link>
+        <div className="space-y-2">
+          <label htmlFor="email" className="block font-medium">
+            Email
+          </label>
+          <Input
+            id="email"
+            name="email"
+            type="email"
+            value={formData.email}
+            onChange={handleChange}
+            onBlur={handleEmailBlur}
+            className={errors.email ? "border-rose-500" : ""}
+            aria-invalid={!!errors.email}
+            aria-describedby={errors.email ? "email-error" : undefined}
+          />
+          {errors.email && (
+            <p id="email-error" className="text-sm text-rose-500">
+              {errors.email}
+            </p>
+          )}
         </div>
-        <Button props={{ type: "submit", disabled: loading || !!errors.email || !!errors.password }}>
-          {loading ? "Entrando..." : "Entrar"}
-        </Button>
-      </div>
-    </form>
+        <div className="space-y-2">
+          <label htmlFor="password" className="block font-medium">
+            Senha
+          </label>
+          <Password
+            id="password"
+            name="password"
+            value={formData.password}
+            onChange={handleChange}
+            className={errors.password ? "border-rose-500" : ""}
+            placeholder="Digite sua senha..."
+            showStrength={true}
+          />
+          {errors.password && (
+            <p className="text-sm text-rose-500">{errors.password}</p>
+          )}
+        </div>
+        <div className="flex items-center justify-between">
+          <div>
+            Ainda não tem uma conta?{" "}
+            <Link href="/cadastro" className="underline">
+              Cadastre-se
+            </Link>
+          </div>
+          <Button props={{ type: "submit", disabled: loading || !!errors.email || !!errors.password }}>
+            {loading ? "Entrando..." : "Entrar"}
+          </Button>
+        </div>
+      </form>
+    </div>
   );
 }
