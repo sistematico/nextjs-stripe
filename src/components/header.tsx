@@ -26,7 +26,6 @@ export async function Header() {
               />
             </Link>
           </div>
-
           {/* Desktop Navigation */}
           <div className="hidden md:flex md:items-center md:gap-8">
             <Navbar />

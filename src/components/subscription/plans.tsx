@@ -52,7 +52,7 @@ export function Plans() {
       </div>
     );
   }
-
+  
   return (
     <div className="flex-1 py-8">
       <div className="container mx-auto px-4">
@@ -63,7 +63,6 @@ export function Plans() {
               Selecione o plano que melhor atende às suas necessidades
             </p>
           </div>
-
           {plans.length === 0 ? (
             <div className="text-center py-12">
               <p className="text-gray-600 dark:text-gray-400">Nenhum plano disponível no momento.</p>
@@ -71,8 +70,8 @@ export function Plans() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {plans.map(plan => (
-                <div 
-                  key={plan.id} 
+                <div
+                  key={plan.id}
                   className="relative bg-white text-black rounded-2xl border border-gray-200 p-8 shadow-sm hover:shadow-lg transition-shadow duration-300"
                 >
                   <div className="flex flex-col h-full">
@@ -80,7 +79,6 @@ export function Plans() {
                       <h2 className="text-2xl font-bold mb-2 text-gray-900">{plan.name}</h2>
                       <p>{plan.description || "Plano de assinatura"}</p>
                     </div>
-                    
                     <div className="mb-6">
                       <div className="flex items-baseline">
                         <span className="text-4xl font-bold text-gray-900">R$</span>
@@ -88,7 +86,6 @@ export function Plans() {
                         <span className="text-gray-600 ml-2">/{plan.interval === 'month' ? 'mês' : 'ano'}</span>
                       </div>
                     </div>
-
                     <div className="mt-auto">
                       <button
                         onClick={() => handleSelectPlan(plan)}
@@ -102,7 +99,6 @@ export function Plans() {
               ))}
             </div>
           )}
-
           {selectedPlan && (
             <PaymentModal
               plan={selectedPlan}
