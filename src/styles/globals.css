@@ -24,3 +24,14 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Adicione ao final do arquivo */
+.stripe-checkout-container {
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+/* Personalização do Stripe Embedded Checkout */
+.stripe-checkout-container iframe {
+  min-height: 500px;
+}

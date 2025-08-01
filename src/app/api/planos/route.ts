@@ -13,7 +13,7 @@ export async function GET() {
 
     const plans = prices.data.map(price => ({
       id: price.id,
-      name: price.metadata.name,
+      name: price.nickname,
       description: price.metadata.description,
       price: price.unit_amount,
       interval: price.recurring?.interval,
