@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Plans } from "@/components/subscription/plans";
 
 export default async function Home() {
-  const user = await getCurrentUser({ withFullUser: true });
+  const user = await getCurrentUser();
 
   if (!user) {
     return (
