@@ -1,3 +1,4 @@
+// src/lib/user.ts
 import { eq } from "drizzle-orm";
 import { cache } from "react";
 import { cookies } from "next/headers";
@@ -6,16 +7,6 @@ import { getUserFromSession } from "@/lib/session";
 import { db } from "@/db";
 import { users } from "@/db/schema";
 
-type FullUser = Exclude<
-  Awaited<ReturnType<typeof getUserFromDb>>,
-  undefined | null
->;
-
-type User = Exclude<
-  Awaited<ReturnType<typeof getUserFromSession>>,
-  undefined | null
->;
-
 async function getUserFromDb(id: number) {
   return await db.query.users.findFirst({
     columns: { id: true, email: true, role: true, name: true, username: true },
@@ -23,44 +14,23 @@ async function getUserFromDb(id: number) {
   });
 }
 
-function _getCurrentUser(options: {
-  withFullUser: true;
-  redirectIfNotFound: true;
-}): Promise<FullUser>;
+async function _getCurrentUser(redirectIfNotFound = false) {
+  const sessionUser = await getUserFromSession(await cookies());
 
-function _getCurrentUser(options: {
-  withFullUser: true;
-  redirectIfNotFound?: false;
-}): Promise<FullUser | null>;
-
-function _getCurrentUser(options: {
-  withFullUser?: false;
-  redirectIfNotFound: true;
-}): Promise<User>;
-
-function _getCurrentUser(options?: {
-  withFullUser?: false;
-  redirectIfNotFound?: false;
-}): Promise<User | null>;
-
-async function _getCurrentUser({
-  withFullUser = false,
-  redirectIfNotFound = false,
-} = {}) {
-  const user = await getUserFromSession(await cookies());
-
-  if (!user) {
+  if (!sessionUser) {
     if (redirectIfNotFound) return redirect("/entrar");
     return null;
   }
 
-  if (withFullUser) {
-    const fullUser = await getUserFromDb(user.id);
-    if (!fullUser) throw new Error("User not found in database");
-    return fullUser;
+  const fullUser = await getUserFromDb(sessionUser.id);
+  
+  if (!fullUser) {
+    console.error("User not found in database");
+    if (redirectIfNotFound) return redirect("/entrar");
+    return null;
   }
 
-  return user;
+  return fullUser;
 }
 
 export const getCurrentUser = cache(_getCurrentUser);

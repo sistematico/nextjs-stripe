@@ -1,8 +1,12 @@
+// src/components/ui/user-menu.tsx
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
+import Link from "next/link";
+import { logOut } from "@/actions/auth";
+import { ChevronDown, User, Settings, LogOut } from "lucide-react";
 
-interface NavbarProps {
+interface UserMenuProps {
   user: {
     id: number;
     email: string;
@@ -11,100 +15,105 @@ interface NavbarProps {
   } | null;
 }
 
-export function UserMenu({ user }: NavbarProps) {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+export function UserMenu({ user }: UserMenuProps) {
+  const [isOpen, setIsOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleLogout = async () => {
+    await logOut();
+  };
+
+  if (!user) {
+    return (
+      <div className="flex items-center gap-4">
+        <Link
+          href="/entrar"
+          className="text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+        >
+          Entrar
+        </Link>
+        <Link
+          href="/cadastro"
+          className="inline-flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-transparent rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+        >
+          Cadastrar
+        </Link>
+      </div>
+    );
+  }
 
   return (
-    <>
-      <div className={`md:relative md:block ${isMenuOpen ? "block" : "hidden"}`}>
-        <button
-          type="button"
-          className="inline-block md:block overflow-hidden rounded-full border border-gray-300 shadow-inner"
-        >
-          <span className="sr-only">Toggle dashboard menu</span>
+    <div className="relative" ref={menuRef}>
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+      >
+        <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-white font-semibold">
+          {user.name ? user.name.charAt(0).toUpperCase() : user.email.charAt(0).toUpperCase()}
+        </div>
+        <span className="hidden lg:block">{user.name || user.email}</span>
+        <ChevronDown className="w-4 h-4" />
+      </button>
 
-          <img
-            src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=1770&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-            alt=""
-            className="size-10 object-cover"
-          />
-        </button>
+      {isOpen && (
+        <div className="absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white dark:bg-gray-800 ring-1 ring-black ring-opacity-5">
+          <div className="py-1">
+            <div className="px-4 py-2 border-b border-gray-200 dark:border-gray-700">
+              <p className="text-sm font-medium text-gray-900 dark:text-white">
+                {user.name || user.email}
+              </p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                {user.email}
+              </p>
+            </div>
 
-        <div
-          className="absolute end-0 z-10 mt-0.5 w-56 divide-y divide-gray-100 rounded-md border border-gray-100 bg-white shadow-lg"
-          role="menu"
-        >
-          <div className="p-2">
-            <a
-              href="#"
-              className="block rounded-lg px-4 py-2 text-sm text-gray-500 hover:bg-gray-50 hover:text-gray-700"
-              role="menuitem"
-            >
-              My profile
-            </a>
-
-            <a
-              href="#"
-              className="block rounded-lg px-4 py-2 text-sm text-gray-500 hover:bg-gray-50 hover:text-gray-700"
-              role="menuitem"
-            >
-              Billing summary
-            </a>
-
-            <a
-              href="#"
-              className="block rounded-lg px-4 py-2 text-sm text-gray-500 hover:bg-gray-50 hover:text-gray-700"
-              role="menuitem"
-            >
-              Team settings
-            </a>
-          </div>
-
-          <div className="p-2">
-            <form method="POST" action="#">
-              <button
-                type="submit"
-                className="flex w-full items-center gap-2 rounded-lg px-4 py-2 text-sm text-red-700 hover:bg-red-50"
-                role="menuitem"
+            {user.role === "admin" && (
+              <Link
+                href="/admin"
+                className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth="1.5"
-                  stroke="currentColor"
-                  className="size-4"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M9 15 3 9m0 0 6-6M3 9h12a6 6 0 0 1 0 12h-3"
-                  />
-                </svg>
+                <User className="w-4 h-4" />
+                Painel Admin
+              </Link>
+            )}
 
-                Logout
-              </button>
-            </form>
+            <Link
+              href="/dashboard"
+              className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+            >
+              <User className="w-4 h-4" />
+              Dashboard
+            </Link>
+
+            <Link
+              href="/ajustes"
+              className="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+            >
+              <Settings className="w-4 h-4" />
+              Configurações
+            </Link>
+
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 text-left"
+            >
+              <LogOut className="w-4 h-4" />
+              Sair
+            </button>
           </div>
         </div>
-      </div>
-      <div className="block md:hidden">
-        <button
-          className="rounded-sm bg-gray-100 p-2 text-gray-600 transition hover:text-gray-600/75"
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="size-5"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth="2"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-          </svg>
-        </button>
-      </div>
-    </>
+      )}
+    </div>
   );
 }

@@ -9,24 +9,17 @@ export default async function Home() {
 
   if (!user) {
     return (
-      <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-nunito-sans)]">
-        <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
+      <div className="flex-1 flex items-center justify-center p-4">
+        <div className="w-full max-w-6xl">
           <Plans />
-        </main>
+        </div>
       </div>
-      // <div className="container mx-auto py-20">
-      //   <div className="flex items-center justify-center min-h-[calc(100vh-10rem)] w-full w-md-2xl">
-      //     <Link href="/auth/signin" className="text-blue-500 hover:underline">
-      //       Faça login para continuar
-      //     </Link>
-      //   </div>
-      // </div>
     );
   }
 
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-nunito-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
+    <div className="flex-1 flex items-center justify-center p-4">
+      <div className="flex flex-col gap-8 items-center">
         <Image
           className="dark:invert"
           src="/next.svg"
@@ -59,7 +52,7 @@ export default async function Home() {
           </Card>
         )
       : null}
-      </main>
+      </div>
     </div>
   );
 }
