@@ -1,9 +1,55 @@
-export function SuccessPage() {
+"use client";
+
+import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
+
+export default function SuccessPage() {
+  const [status, setStatus] = useState("loading");
+  const [customerEmail, setCustomerEmail] = useState("");
+  const searchParams = useSearchParams();
+  const sessionId = searchParams.get("session_id");
+
+  useEffect(() => {
+    if (sessionId) {
+      fetchSessionStatus();
+    }
+  }, [sessionId]);
+
+  async function fetchSessionStatus() {
+    const response = await fetch("/api/check-session", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ sessionId }),
+    });
+
+    const { session, error } = await response.json();
+
+    if (error) {
+      setStatus("failed");
+      console.error(error);
+      return;
+    }
+
+    setStatus(session.status);
+    setCustomerEmail(session.customer_email);
+  }
+
+  if (status === "loading") {
+    return <div>Loading...</div>;
+  }
+
+  if (status === "failed") {
+    return <div>Failed to process subscription. Please try again.</div>;
+  }
+
   return (
-    <div>
-      <h1>Thank You for Your Purchase!</h1>
-      <p>Your transaction was successful.</p>
-      <p>We appreciate your business and hope you enjoy your purchase!</p>
+    <div className="container mx-auto py-20">
+      <div className="flex flex-col items-center justify-center min-h-[calc(100vh-10rem)] w-full w-md-2xl">
+        <h1>Subscription Successful!</h1>
+        <p>Thank you for your subscription. A confirmation email has been sent to {customerEmail}.</p>
+      </div>
     </div>
   );
 }

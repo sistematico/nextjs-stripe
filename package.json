@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@libsql/client": "^0.15.10",
+    "@stripe/react-stripe-js": "^3.8.1",
     "@stripe/stripe-js": "^7.7.0",
     "drizzle-orm": "^0.44.3",
     "jose": "^6.0.12",

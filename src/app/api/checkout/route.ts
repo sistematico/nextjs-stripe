@@ -1,30 +1,30 @@
-import Stripe from "stripe";
-import { NextRequest } from "next/server";
+"use server";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: "2025-07-30.basil" });
+import { headers } from 'next/headers'
+import { NextRequest, NextResponse } from "next/server";
+import { stripe } from "@/lib/stripe";
 
 export async function POST(request: NextRequest) {
-  const session = await stripe.checkout.sessions.create({
-    payment_method_types: ['card'],
-    line_items: [
-      {
-        price_data: {
-          currency: 'usd',
-          product_data: {
-            name: 'Your Product Name',
-          },
-          unit_amount: 1000, // Price in cents
-        },
-        quantity: 1,
-      },
-    ],
-    mode: 'payment',
-    success_url: `${request.headers.get('origin')}/sucesso?session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${request.headers.get("origin")}/cancelamento`,
-  });
+  const { priceId } = await request.json();
+  if (!priceId) return NextResponse.json({ error: "Price ID is required" }, { status: 400 });
+  const origin = (await headers()).get("origin") || "http://localhost:3000";
 
-  return new Response(JSON.stringify({ id: session.id }), {
-    status: 200,
-    headers: { 'Content-Type': 'application/json' }
-  });
+  try {
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ["card"],
+      line_items: [
+        {
+          price: priceId,
+          quantity: 1,
+        },
+      ],
+      mode: "subscription",
+      ui_mode: "embedded",
+      return_url: `${origin}/sucesso?session_id={CHECKOUT_SESSION_ID}`,
+    });
+
+    return NextResponse.json({ sessionId: session.id, client_secret: session.client_secret }, { status: 200 });
+  } catch (error) {
+    return NextResponse.json({ error }, { status: 500 });
+  }
 }
