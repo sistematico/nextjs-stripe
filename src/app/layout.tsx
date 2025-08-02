@@ -33,7 +33,9 @@ export default function RootLayout({
       <body className="min-h-screen flex flex-col antialiased overflow-x-hidden">
         <Header />
         <main className="flex-1 flex flex-col">
-          {children}
+          <div className="container mx-auto px-4 py-8">
+            {children}
+          </div>
         </main>
         <Footer />
       </body>

@@ -18,7 +18,7 @@ export default async function Home() {
   }
 
   return (
-    <div className="flex-1 flex items-center justify-center p-4">
+    // <div className="flex-1 flex items-center justify-center p-4">
       <div className="flex flex-col gap-8 items-center">
         <Image
           className="dark:invert"
@@ -53,6 +53,6 @@ export default async function Home() {
         )
       : null}
       </div>
-    </div>
+    // </div>
   );
 }

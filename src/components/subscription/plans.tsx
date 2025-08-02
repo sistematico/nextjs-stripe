@@ -22,6 +22,7 @@ export function Plans() {
     fetch("/api/planos")
       .then(res => res.json())
       .then(data => {
+        data.reverse();
         setPlans(data);
         setLoading(false);
       })
