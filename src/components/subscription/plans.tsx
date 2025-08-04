@@ -18,6 +18,7 @@ interface UserSubscription {
   status: string;
   current_period_end: number;
   cancel_at_period_end: boolean;
+  cancel_at?: number;
   items: {
     data: Array<{
       price: {
@@ -52,10 +53,10 @@ export function Plans() {
 
         // Tentar carregar assinatura do usuário (pode falhar se não estiver logado)
         try {
-          const subscriptionResponse = await fetch("/api/user-subscription");
+          const subscriptionResponse = await fetch("/api/subscription");
           if (subscriptionResponse.ok) {
             const subscriptionData = await subscriptionResponse.json();
-            setUserSubscription(subscriptionData.subscription || null);
+            setUserSubscription(subscriptionData || null);
           }
         } catch (subscriptionError) {
           // Usuário não logado ou sem assinatura - isso é normal
@@ -163,9 +164,9 @@ export function Plans() {
             {userSubscription && (
               <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg inline-block">
                 <p className="text-sm text-blue-600 dark:text-blue-400">
-                  {userSubscription.cancel_at_period_end 
-                    ? "Sua assinatura será cancelada em " + new Date(userSubscription.current_period_end * 1000).toLocaleDateString('pt-BR')
-                    : "Você tem uma assinatura ativa"
+                  {userSubscription.cancel_at
+                    ? (`Sua assinatura será cancelada em <b>${new Date(userSubscription.cancel_at * 1000).toLocaleDateString('pt-BR')}</b>`)
+                    : ("Você tem uma assinatura ativa")
                   }
                 </p>
               </div>

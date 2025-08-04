@@ -9,7 +9,7 @@ export function CancelSubscriptionButton() {
   const handleCancel = async () => {
     setLoading(true);
     try {
-      const response = await fetch('/api/cancel-subscription', {
+      const response = await fetch('/api/cancel', {
         method: 'POST',
       });
 
