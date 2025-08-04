@@ -3,7 +3,8 @@ import { SignJWT, jwtVerify } from "jose";
 
 const SESSION_EXPIRATION_SECONDS = 60 * 60 * 24 * 7;
 const COOKIE_SESSION_KEY = "session-token";
-const JWT_SECRET = new TextEncoder().encode(process.env.JWT_SECRET || "default_secret_key_change_in_production");
+const JWT_SECRET = new TextEncoder().encode(process.env.JWT_TOKEN_SECRET!);
+if (!JWT_SECRET) throw new Error("JWT_TOKEN_SECRET is not set in the environment variables");
 const sessionSchema = z.object({ id: z.int(), role: z.string() });
 
 type UserSession = z.infer<typeof sessionSchema>;
@@ -28,6 +29,8 @@ export async function getUserFromSession(cookies: Pick<Cookies, "get">) {
 
   try {
     const { payload } = await jwtVerify(sessionToken, JWT_SECRET, { algorithms: ["HS256"] });
+    if (!payload) return null;
+
     const { success, data } = sessionSchema.safeParse(payload);
     return success ? data : null;
   } catch (error) {
