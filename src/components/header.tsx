@@ -4,7 +4,7 @@ import Image from "next/image";
 import { getCurrentUser } from "@/lib/user";
 import { Navbar } from "@/components/navbar";
 import { UserMenu } from "@/components/ui/user-menu";
-import { MobileMenu } from "@/components/mobile-menu";
+import { MobileMenu } from "@/components/ui/mobile-menu";
 
 export async function Header() {
   const user = await getCurrentUser();
@@ -27,7 +27,7 @@ export async function Header() {
             </Link>
           </div>
           {/* Desktop Navigation */}
-          <div className="hidden md:flex md:items-center md:gap-8">
+          <div className="hidden md:flex md:items-center md:gap-4">
             <Navbar />
             <UserMenu user={user} />
           </div>

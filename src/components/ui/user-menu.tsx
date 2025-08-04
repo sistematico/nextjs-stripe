@@ -10,6 +10,7 @@ interface UserMenuProps {
   user: {
     id: number;
     email: string;
+    avatar: string | null;
     role: string;
     name?: string;
   } | null;
@@ -57,12 +58,16 @@ export function UserMenu({ user }: UserMenuProps) {
     <div className="relative" ref={menuRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+        className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 focus:outline-none cursor-pointer"
       >
-        <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-white font-semibold">
-          {user.name ? user.name.charAt(0).toUpperCase() : user.email.charAt(0).toUpperCase()}
-        </div>
-        <span className="hidden lg:block">{user.name || user.email}</span>
+        {user?.avatar && (
+          <img src={user.avatar} alt={user.name} className="w-8 h-8 rounded-full" />
+        ) || (
+          <div className="w-8 h-8 rounded-full bg-indigo-600 flex items-center justify-center text-white font-semibold">
+            {user.name ? user.name.charAt(0).toUpperCase() : user.email.charAt(0).toUpperCase()}
+          </div>
+        )}
+        {/* <span className="hidden lg:block">{user.name || user.email}</span> */}
         <ChevronDown className="w-4 h-4" />
       </button>
 
@@ -106,7 +111,7 @@ export function UserMenu({ user }: UserMenuProps) {
 
             <button
               onClick={handleLogout}
-              className="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 text-left"
+              className="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 text-left cursor-pointer"
             >
               <LogOut className="w-4 h-4" />
               Sair

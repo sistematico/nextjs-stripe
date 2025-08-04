@@ -8,10 +8,11 @@ import { db } from "@/db";
 import { users } from "@/db/schema";
 
 async function getUserFromDb(id: number) {
-  return await db.query.users.findFirst({
-    columns: { id: true, email: true, role: true, name: true, username: true },
-    where: eq(users.id, id),
-  });
+  // return await db.query.users.findFirst({
+  //   columns: { id: true, email: true, role: true, name: true, username: true },
+  //   where: eq(users.id, id),
+  // });
+  return await db.query.users.findFirst({ where: eq(users.id, id) });
 }
 
 async function _getCurrentUser(redirectIfNotFound = false) {
