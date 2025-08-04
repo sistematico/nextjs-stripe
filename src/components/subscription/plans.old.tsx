@@ -19,7 +19,7 @@ export function Plans() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/api/planos")
+    fetch("/api/plans")
       .then(res => res.json())
       .then(data => {
         data.reverse();

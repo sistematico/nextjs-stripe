@@ -39,38 +39,20 @@ export function Plans() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        // Carregar planos sempre
-        const plansResponse = await fetch("/api/plans");
-        const plansData = await plansResponse.json();
-        
-        if (plansResponse.ok) {
-          plansData.reverse();
-          setPlans(plansData);
-        }
-
-        // Tentar carregar assinatura do usuário (pode falhar se não estiver logado)
-        try {
-          const subscriptionResponse = await fetch("/api/user-subscription");
-          if (subscriptionResponse.ok) {
-            const subscriptionData = await subscriptionResponse.json();
-            setUserSubscription(subscriptionData.subscription || null);
-          }
-        } catch (subscriptionError) {
-          // Usuário não logado ou sem assinatura - isso é normal
-          console.log("Usuário sem assinatura ou não logado");
-          setUserSubscription(null);
-        }
-
-      } catch (err) {
-        console.error("Erro ao carregar planos:", err);
-      } finally {
+    Promise.all([
+      fetch("/api/plans").then(res => res.json()),
+      fetch("/api/subscription").then(res => res.json()) // Vamos criar essa API
+    ])
+      .then(([plans, subscription]) => {
+        plans.reverse();
+        setPlans(plans);
+        setUserSubscription(subscription.subscription || null);
         setLoading(false);
-      }
-    };
-
-    loadData();
+      })
+      .catch(err => {
+        console.error("Erro ao carregar dados:", err);
+        setLoading(false);
+      });
   }, []);
 
   const handleSelectPlan = (plan: Plan) => {

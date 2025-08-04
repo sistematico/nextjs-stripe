@@ -17,7 +17,7 @@ type User = InferSelectModel<typeof users> | null;
 export function SettingsForm({ user }: { user: User }) {
   const [state, formAction, isPending] = useActionState(updateProfile, null);
   const [showPasswordFields, setShowPasswordFields] = useState(false);
-  const [currentAvatar, setCurrentAvatar] = useState(user?.avatar || "/images/avatar.svg");
+  const [currentAvatar, setCurrentAvatar] = useState(user?.avatar || "/avatar.svg");
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
 
   if (!user) return <p>Usuário não encontrado.</p>;

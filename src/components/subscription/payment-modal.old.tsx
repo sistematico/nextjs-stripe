@@ -22,35 +22,15 @@ interface PaymentModalProps {
 export function PaymentModal({ plan, isOpen, onClose }: PaymentModalProps) {
   const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
-  const fetchClientSecret = useCallback(async (): Promise<string> => {
-    try {
-      const response = await fetch("/api/checkout", {
-        method: "POST",
-        headers: { 
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ priceId: plan.price_id }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      
-      if (!data.client_secret) {
-        throw new Error("client_secret não foi retornado pela API");
-      }
-
-      return data.client_secret;
-    } catch (error) {
-      console.error('Erro ao buscar client_secret:', error);
-      // Retornar uma string vazia ou fechar o modal em caso de erro
-      onClose();
-      throw error;
-    }
-  }, [plan.price_id, onClose]);
+  const fetchClientSecret = useCallback(async () => {
+    const response = await fetch("/api/checkout", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ priceId: plan.price_id }),
+    });
+    const data = await response.json();
+    return data.client_secret;
+  }, [plan.price_id]);
 
   // Fechar modal com ESC
   useEffect(() => {
@@ -79,6 +59,7 @@ export function PaymentModal({ plan, isOpen, onClose }: PaymentModalProps) {
       aria-modal="true"
     >
       <div className="flex items-center justify-center min-h-screen p-4">
+        {/* Modal panel */}
         <div className="relative bg-white rounded-lg shadow-xl max-w-lg w-full max-h-[90vh] overflow-hidden">
           <div className="p-6">
             <div className="flex items-center justify-between mb-4">
